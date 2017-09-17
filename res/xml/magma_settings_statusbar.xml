@@ -25,5 +25,18 @@
         android:summary="@string/status_bar_system_icons_summary">
         <intent android:action="com.android.settings.action.STATUS_BAR_TUNER" />
     </PreferenceScreen>
+	
+    <com.cosp.settings.preferences.SystemSettingSwitchPreference
+        android:key="network_traffic_state"
+        android:title="@string/network_traffic_state_title"
+        android:summary="@string/network_traffic_state_summary"
+        android:defaultValue="true" />
+
+    <com.cosp.settings.preferences.CustomSeekBarPreference
+        android:key="network_traffic_autohide_threshold"
+        android:title="@string/network_traffic_autohide_threshold_title"
+        android:max="10"
+        settings:min="0"
+        settings:units="" />
 
 </PreferenceScreen>
