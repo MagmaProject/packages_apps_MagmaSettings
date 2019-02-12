@@ -36,12 +36,14 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
+import com.android.internal.util.magma.magmaUtils;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settings.R;
 import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import com.android.settings.SettingsPreferenceFragment;
 import com.magma.settings.preferences.CustomSeekBarPreference;
+import com.magma.settings.preferences.SecureSettingIntListPreference;
 import com.magma.settings.preferences.SystemSettingSwitchPreference;
 
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
         Preference.OnPreferenceChangeListener {
 			
     private static final String NETWORK_TRAFFIC_FONT_SIZE  = "network_traffic_font_size";
+    private static final String CLOCK_POSITION = "status_bar_clock_position";
     private static final String PREF_AM_PM_STYLE = "status_bar_am_pm";
     private static final String PREF_CLOCK_DATE_DISPLAY = "clock_date_display";
     private static final String PREF_CLOCK_DATE_STYLE = "clock_date_style";
@@ -68,13 +71,16 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
     private CustomSeekBarPreference mNetTrafficSize;
     private CustomSeekBarPreference mThreshold;
     private SystemSettingSwitchPreference mShowArrows;
+    private SecureSettingIntListPreference mClockPosition;
     private ListPreference mClockAmPmStyle;
     private ListPreference mClockDateDisplay;
     private ListPreference mClockDateStyle;
     private ListPreference mClockDateFormat;
     private ListPreference mClockDatePosition;
     private SwitchPreference mStatusBarClock;
-	
+
+    private Context mContext;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +122,17 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
             updateTrafficLocation(0); 
         }
         mNetTrafficLocation.setSummary(mNetTrafficLocation.getEntry());
+		
+        mClockPosition = (SecureSettingIntListPreference) findPreference(CLOCK_POSITION);
+
+        // Adjust status bar clock prefs for notched devices
+        if (magmaUtils.hasNotch(getActivity())) {
+            mClockPosition.setEntries(R.array.clock_position_entries_notch);
+            mClockPosition.setEntryValues(R.array.clock_position_values_notch);
+        } else {
+            mClockPosition.setEntries(R.array.clock_position_entries);
+            mClockPosition.setEntryValues(R.array.clock_position_values);
+        }
 		
         mClockAmPmStyle = (ListPreference) findPreference(PREF_AM_PM_STYLE);
         mClockAmPmStyle.setOnPreferenceChangeListener(this);
@@ -371,6 +388,19 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
             }
         }
         mClockDateFormat.setEntries(parsedDateEntries);
+    }
+	
+    public void onResume(Context context) {
+        super.onResume();
+
+        // Adjust status bar clock prefs for notched devices
+        if (magmaUtils.hasNotch(getActivity())) {
+            mClockPosition.setEntries(R.array.clock_position_entries_notch);
+            mClockPosition.setEntryValues(R.array.clock_position_values_notch);
+        } else {
+            mClockPosition.setEntries(R.array.clock_position_entries);
+            mClockPosition.setEntryValues(R.array.clock_position_values);
+        }
     }
 
     @Override
