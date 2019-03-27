@@ -36,8 +36,8 @@ import androidx.preference.SwitchPreference;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.internal.logging.nano.MetricsProto;
-import com.cosp.settings.preferences.CustomSeekBarPreference;
-import com.cosp.settings.preferences.SystemSettingSwitchPreference;
+import com.magma.settings.preferences.CustomSeekBarPreference;
+import com.magma.settings.preferences.SystemSettingSwitchPreference;
 
 public class StatusBarSettings extends SettingsPreferenceFragment implements
         Preference.OnPreferenceChangeListener {
