@@ -16,28 +16,37 @@
 
 package com.magma.settings.fragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.ServiceManager;
 import android.os.UserHandle;
+import android.provider.SearchIndexableResource;
 import android.provider.Settings;
-import android.view.LayoutInflater;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-
+import android.widget.EditText;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.SwitchPreference;
 
+import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settings.R;
+import com.android.settings.search.BaseSearchIndexProvider;
+import com.android.settings.search.Indexable;
 import com.android.settings.SettingsPreferenceFragment;
-import com.android.internal.logging.nano.MetricsProto;
 import com.magma.settings.preferences.CustomSeekBarPreference;
 import com.magma.settings.preferences.SystemSettingSwitchPreference;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class StatusBarSettings extends SettingsPreferenceFragment implements
         Preference.OnPreferenceChangeListener {
@@ -54,8 +63,7 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.magma_settings_statusbar);
-        ContentResolver resolver = getActivity().getContentResolver();
-        final PreferenceScreen prefScreen = getPreferenceScreen();
+        final ContentResolver resolver = getActivity().getContentResolver();
 		
         int NetTrafficSize = Settings.System.getInt(resolver,
                 Settings.System.NETWORK_TRAFFIC_FONT_SIZE, 42);
@@ -95,11 +103,6 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
     }
 
     @Override
-    public int getMetricsCategory() {
-        return MetricsProto.MetricsEvent.MOONSHINE;
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
     }
@@ -109,8 +112,9 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
         super.onPause();
     }
 
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-		
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object objValue) {
+        AlertDialog dialog;
         if (preference == mNetTrafficLocation) {
             int location = Integer.valueOf((String) objValue);
             int index = mNetTrafficLocation.findIndexOfValue((String) objValue);
@@ -134,7 +138,7 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
             Settings.System.putIntForUser(getContentResolver(),
                     Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, val,
                     UserHandle.USER_CURRENT);
-            return true;	
+                return true;	
         } else if (preference == mNetTrafficType) {
             int val = Integer.valueOf((String) objValue);
             Settings.System.putIntForUser(getContentResolver(),
@@ -146,11 +150,11 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
         }  else if (preference == mNetTrafficSize) {
             int width = ((Integer)objValue).intValue();
             Settings.System.putInt(getActivity().getContentResolver(),
-                    Settings.System.NETWORK_TRAFFIC_FONT_SIZE, width);
+                 Settings.System.NETWORK_TRAFFIC_FONT_SIZE, width);
             return true;
         }
-        }
-    }
+        return false;
+	}
 	
     public void updateTrafficLocation(int location) {
         switch(location){ 
@@ -170,6 +174,11 @@ public class StatusBarSettings extends SettingsPreferenceFragment implements
             default: 
                 break;
         }
+    }
+
+    @Override
+    public int getMetricsCategory() {
+        return MetricsEvent.MOONSHINE;
     }
 
 }

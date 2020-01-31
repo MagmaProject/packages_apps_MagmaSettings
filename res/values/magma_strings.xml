@@ -18,6 +18,11 @@
     <!-- App Title -->
     <string name="magma_settings_title">Magma Settings</string>
 	
+    <!-- Others -->
+    <string name="edit_hint">Value</string>
+    <string name="seek_value_edit_label">Set value</string>
+    <string name="ok">OK</string>
+	
 	<!-- StatusBar -->
     <string name="statusbar_title">StatusBar settings</string>
     <string name="status_bar_system_icons_title">System icons</string>
