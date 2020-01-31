@@ -17,5 +17,9 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- App Title -->
     <string name="magma_settings_title">Magma Settings</string>
+	
+	<!-- StatusBar -->
     <string name="statusbar_title">StatusBar settings</string>
+    <string name="status_bar_system_icons_title">System icons</string>
+    <string name="status_bar_system_icons_summary">Control which status bar icons are shown</string>
 </resources>
